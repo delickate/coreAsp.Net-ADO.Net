@@ -208,7 +208,9 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Basic concepts ADO
 
-### Connection
+### MSACESS
+
+#### Connection
 ```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
@@ -217,7 +219,7 @@ conn.Open "C:/Users/delickate/Documents/Visual Studio 2013/Projects/Usermanageme
 %> 
 ```
 
-### Recordset
+#### Recordset
 ```
 <%
 set rs=Server.CreateObject("ADODB.recordset")
@@ -225,7 +227,7 @@ rs.Open "Customers", conn
 %>
 ```
 
-### Show record
+#### Show record
 ```
 <html>
 <body>
@@ -256,7 +258,7 @@ conn.close
 </html> 
 ```
 
-### Fetch record
+#### Fetch record
 ```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
@@ -287,7 +289,7 @@ rs.Open sql, conn
 </table>
 ```
 
-### insert
+#### insert
 ```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
@@ -316,7 +318,7 @@ conn.close
 %>
 ```
 
-### update
+#### update
 ```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
@@ -363,7 +365,7 @@ conn.close
 %>
 ```
 
-### Delete
+#### Delete
 ```
 sql="DELETE FROM users"
   sql=sql & " WHERE id='" & id & "'"
@@ -375,3 +377,315 @@ sql="DELETE FROM users"
     response.write("Record " & id & " was deleted!")
   end if
 ```  
+
+### MS SQL
+
+#### connection
+```
+using System;
+using System.Data.SqlClient;
+
+string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["UserManagementConnection"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                con.Open();
+                Console.WriteLine("Connection Established Successfully");
+            }
+```
+
+#### command
+```
+using System;
+using System.Data.SqlClient;
+
+string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["UserManagementConnection"].ConnectionString;
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+        connection.Open();
+        string sqlQuery = "SELECT * FROM users";
+		SqlCommand command = new SqlCommand(sqlQuery, connection);
+
+		SqlDataReader reader = command.ExecuteReader();
+		while (reader.Read())
+		{
+		      Console.WriteLine(reader["name"] + " " + reader["phone"]);
+		}
+		reader.Close();
+}
+
+```
+
+#### datareader
+```
+using System;
+using System.Data.SqlClient;
+
+string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["UserManagementConnection"].ConnectionString;
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+        // Creating the command object
+        SqlCommand cmd = new SqlCommand("select * from users", connection);
+        // Opening Connection  
+        connection.Open();
+        // Executing the SQL query  
+        SqlDataReader sdr = cmd.ExecuteReader();
+        //Looping through each record
+        while (sdr.Read())
+        {
+           Console.WriteLine(sdr["name"] + ",  " + sdr["email"] + ",  " + sdr["phone"]);
+        }
+
+}
+
+```
+
+#### dataAdapter
+```
+using System;
+using System.Data.SqlClient;
+
+string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["UserManagementConnection"].ConnectionString;
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+                    SqlDataAdapter da = new SqlDataAdapter("select * from users", connection);
+                    //Using Data Table
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    //The following things are done by the Fill method
+                    //1. Open the connection
+                    //2. Execute Command
+                    //3. Retrieve the Result
+                    //4. Fill/Store the Retrieve Result in the Data table
+                    //5. Close the connection
+                    Console.WriteLine("Using Data Table");
+                    //Active and Open connection is not required
+                    //dt.Rows: Gets the collection of rows that belong to this table
+                    //DataRow: Represents a row of data in a DataTable.
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        //Accessing using string Key Name
+                        Console.WriteLine(row["name"] + ",  " + row["email"] + ",  " + row["phone"]);
+                        //Accessing using integer index position
+                        //Console.WriteLine(row[0] + ",  " + row[1] + ",  " + row[2]);
+                    }
+                    Console.WriteLine("---------------");
+                    //Using DataSet
+                    DataSet ds = new DataSet();
+                    da.Fill(ds, "student"); //Here, the datatable student will be stored in Index position 0
+                    Console.WriteLine("Using Data Set");
+                    //Tables: Gets the collection of tables contained in the System.Data.DataSet.
+                    //Accessing the datatable from the dataset using the datatable name
+                    foreach (DataRow row in ds.Tables["users"].Rows)
+                    {
+                        //Accessing the data using string Key Name
+                        Console.WriteLine(row["name"] + ",  " + row["email"] + ",  " + row["phone"]);
+                        //Accessing the data using integer index position
+                        //Console.WriteLine(row[0] + ",  " + row[1] + ",  " + row[2]);
+                    }
+}
+
+```
+
+#### dataTable
+```
+using System;
+using System.Data.SqlClient;
+
+
+				//Creating data table instance
+                DataTable dataTable = new DataTable("users");
+                //Add the DataColumn using all properties
+                DataColumn Id = new DataColumn("id");
+                Id.DataType = typeof(int);
+                Id.Unique = true;
+                Id.AllowDBNull = false;
+                Id.Caption = "ID";
+                dataTable.Columns.Add(Id);
+                
+                //Add the DataColumn few properties
+                DataColumn Name = new DataColumn("name");
+                Name.MaxLength = 50;
+                Name.AllowDBNull = false;
+                dataTable.Columns.Add(Name);
+                
+                //Add the DataColumn using defaults
+                DataColumn Email = new DataColumn("email");
+                dataTable.Columns.Add(Email);
+                
+                //Setting the Primary Key
+                dataTable.PrimaryKey = new DataColumn[] { Id };
+                
+                //Add New DataRow by creating the DataRow object
+                DataRow row1 = dataTable.NewRow();
+                row1["id"] = 1;
+                row1["name"] = "Sani";
+                row1["email"] = "delickate@hotmail.com";
+                dataTable.Rows.Add(row1);
+                //Adding new DataRow by simply adding the values
+                dataTable.Rows.Add(1, "Hyne", "delickate@gmail.com");
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Console.WriteLine(row["id"] + ",  " + row["name"] + ",  " + row["email"]);
+                }
+
+
+```
+
+#### using stored procedure
+```
+using System;
+using System.Data.SqlClient;
+
+string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["UserManagementConnection"].ConnectionString;
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+        			SqlCommand cmd = new SqlCommand("spGetUsers", connection)
+                    {
+                        //Specify the command type as Stored Procedure
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    //Open the Connection
+                    connection.Open();
+                    //Execute the command i.e. Executing the Stored Procedure using ExecuteReader method
+                    //SqlDataReader requires an active and open connection
+                    SqlDataReader sdr = cmd.ExecuteReader();
+                    //Read the data from the SqlDataReader 
+                    //Read() method will returns true as long as data is there in the SqlDataReader
+                    while (sdr.Read())
+                    {
+                        //Accessing the data using the string key as index
+                        Console.WriteLine(sdr["id"] + ",  " + sdr["name"] + ",  " + sdr["email"] + ",  " + sdr["phone"]);
+                        //Accessing the data using the integer index position as key
+                        //Console.WriteLine(sdr[0] + ",  " + sdr[1] + ",  " + sdr[2] + ",  " + sdr[3]);
+                    }
+}
+
+```
+
+#### using transections
+```
+using System;
+using System.Data.SqlClient;
+
+string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["UserManagementConnection"].ConnectionString;
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+                connection.Open();
+                // Create the transaction object by calling the BeginTransaction method on connection object
+                SqlTransaction transaction = connection.BeginTransaction();
+                try
+                {
+                    // Associate the first update command with the transaction
+                    SqlCommand cmd = new SqlCommand("UPDATE Accounts SET Balance = Balance - 500 WHERE AccountNumber = 'Account1'", connection, transaction);
+                    //Execute the First Update Command
+                    cmd.ExecuteNonQuery();
+                    // Associate the second update command with the transaction
+                    cmd = new SqlCommand("UPDATE Accounts SET Balance = Balance + 500 WHERE AccountNumber = 'Account2'", connection, transaction);
+                    //Execute the Second Update Command
+                    cmd.ExecuteNonQuery();
+                    // If everythinhg goes well then commit the transaction
+                    transaction.Commit();
+                    Console.WriteLine("Transaction Committed");
+                }
+                catch(Exception EX)
+                {
+                    // If anything goes wrong, then Rollback the transaction
+                    transaction.Rollback();
+                    Console.WriteLine("Transaction Rollback");
+                }
+}
+
+```
+
+#### using commandbuilder
+```
+using System;
+using System.Data.SqlClient;
+
+string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["UserManagementConnection"].ConnectionString;
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+                 SqlDataAdapter dataAdapter = new SqlDataAdapter("SELECT * FROM Employee WHERE Gender='Male'", connection);
+                //SqlDataAdapter dataAdapter = new SqlDataAdapter();
+                //dataAdapter.SelectCommand = new SqlCommand("SELECT * FROM Employee WHERE Gender='Male'", connection);
+                // Associate SqlDataAdapter object with SqlCommandBuilder.
+                // At this point SqlCommandBuilder should generate T-SQL statements automatically
+                SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
+                //SqlCommandBuilder commandBuilder = new SqlCommandBuilder();
+                //commandBuilder.DataAdapter = dataAdapter;
+                //Creating DataSet Object
+                DataSet dataSet = new DataSet();
+                //Filling the DataSet using the Fill Method of SqlDataAdapter object
+                dataAdapter.Fill(dataSet);
+                //Iterating through the DataSet 
+                foreach (DataRow row in dataSet.Tables[0].Rows)
+                {
+                    //Accessing the Data using the string column name as key
+                    Console.WriteLine($"Id: {row["Id"]}, Name: {row[1]}, Salary: {row[2]}, Gender: {row["Gender"]}, Department: {row["Department"]}");
+                }
+                //Now Update First Row i.e. Index Position 0
+                DataRow dataRow = dataSet.Tables[0].Rows[0];
+                dataRow["Name"] = "Name Updated";
+                dataRow["Gender"] = "Female";
+                dataRow["Salary"] = 50000;
+                dataRow["Department"] = "Payroll";
+                //Provide the DataSet and the DataTable name to the Update method
+                //Here, SqlCommandBuilder will automatically generate the UPDATE SQL Statement 
+                int rowsUpdated = dataAdapter.Update(dataSet, dataSet.Tables[0].TableName);
+                //The GetUpdateCommand() method will return the auto generated UPDATE Command
+                Console.WriteLine($"\nUPDATE Command: {commandBuilder.GetUpdateCommand().CommandText}");
+                if (rowsUpdated == 0)
+                {
+                    Console.WriteLine("\nNo Rows Updated");
+                }
+                else
+                {
+                    Console.WriteLine($"\n{rowsUpdated} Row(s) Updated");
+                }
+                //First fetch the DataTable
+                DataTable EmployeeTable = dataSet.Tables[0];
+                //Create a new Row
+                DataRow newRow = EmployeeTable.NewRow();
+                newRow["Name"] = "Pranaya Rout";
+                newRow["Gender"] = "Male";
+                newRow["Salary"] = 450000;
+                newRow["Department"] = "Payroll";
+                EmployeeTable.Rows.Add(newRow);
+                //Provide the DataSet and the DataTable name to the Update method
+                //Here, SqlCommandBuilder will automatically generate the INSERT SQL Statement
+                int rowsInserted = dataAdapter.Update(dataSet, dataSet.Tables[0].TableName);
+                //The GetInsertCommand() method will return the auto generated INSERT Command
+                Console.WriteLine($"\nINSERT Command: {commandBuilder.GetInsertCommand().CommandText}");
+                if (rowsInserted == 0)
+                {
+                    Console.WriteLine("\nNo Rows Inserted");
+                }
+                else
+                {
+                    Console.WriteLine($"\n{rowsUpdated} Row(s) Inserted");
+                }
+                //Now Delete 3nd Row i.e. Index Position 2
+                dataSet.Tables[0].Rows[2].Delete();
+                //Provide the DataSet and the DataTable name to the Update method
+                //Here, SqlCommandBuilder will automatically generate the DELETE SQL Statement
+                int rowsDeleted = dataAdapter.Update(dataSet, dataSet.Tables[0].TableName);
+                //The GetDeleteCommand() method will return the auto generated DELETE Command
+                Console.WriteLine($"\nDELETE Command: {commandBuilder.GetDeleteCommand().CommandText}");
+                if (rowsDeleted == 0)
+                {
+                    Console.WriteLine("\nNo Rows Deleted");
+                }
+                else
+                {
+                    Console.WriteLine($"\n{rowsUpdated} Row(s) Deleted");
+                }
+            }
+            Console.ReadKey();
+
+}
+
+```
+
+
+

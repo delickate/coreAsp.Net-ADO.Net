@@ -204,3 +204,165 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the [MIT License](LICENSE).
 
+---
+
+## Basic concepts ADO
+
+### Connection
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open "C:/Users/delickate/Documents/Visual Studio 2013/Projects/UsermanagementAdoDotNet/webdata/usermanagemenetdb.mdb"
+%> 
+
+### Recordset
+<%
+set rs=Server.CreateObject("ADODB.recordset")
+rs.Open "Customers", conn
+%>
+
+### Show record
+<html>
+<body>
+
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open "C:/Users/delickate/Documents/Visual Studio 2013/Projects/UsermanagementAdoDotNet/webdata/usermanagemenetdb.mdb"
+
+set rs = Server.CreateObject("ADODB.recordset")
+rs.Open "SELECT * FROM users", conn
+
+do until rs.EOF
+  for each x in rs.Fields
+    Response.Write(x.name)
+    Response.Write(" = ")
+    Response.Write(x.value & "<br>")
+  next
+  Response.Write("<br>")
+  rs.MoveNext
+loop
+
+rs.close
+conn.close
+%>
+
+</body>
+</html> 
+
+### Fetch record
+
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open "C:/Users/delickate/Documents/Visual Studio 2013/Projects/UsermanagementAdoDotNet/webdata/usermanagemenetdb.mdb"
+
+set rs=Server.CreateObject("ADODB.recordset")
+sql="SELECT * FROM users WHERE name LIKE 'A%'"
+rs.Open sql, conn
+%>
+
+<table border="1" width="100%">
+  <tr>
+  <%for each x in rs.Fields
+    response.write("<th>" & x.name & "</th>")
+  next%>
+  </tr>
+  <%do until rs.EOF%>
+    <tr>
+    <%for each x in rs.Fields%>
+      <td><%Response.Write(x.value)%></td>
+    <%next
+    rs.MoveNext%>
+    </tr>
+  <%loop
+  rs.close
+  conn.close%>
+</table>
+
+### insert
+
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open "C:/Users/delickate/Documents/Visual Studio 2013/Projects/UsermanagementAdoDotNet/webdata/usermanagemenetdb.mdb"
+
+sql="INSERT INTO customers (id,name,"
+sql=sql & "phone,address,city,postalcode,country)"
+sql=sql & " VALUES "
+sql=sql & "('" & Request.Form("id") & "',"
+sql=sql & "'" & Request.Form("person_name") & "',"
+sql=sql & "'" & Request.Form("person_phone") & "',"
+sql=sql & "'" & Request.Form("person_address") & "',"
+sql=sql & "'" & Request.Form("person_city") & "',"
+sql=sql & "'" & Request.Form("person_postcode") & "',"
+sql=sql & "'" & Request.Form("person_country") & "')"
+
+on error resume next
+conn.Execute sql,recaffected
+if err<>0 then
+  Response.Write("No update permissions!")
+else
+  Response.Write("<h3>" & recaffected & " record added</h3>")
+end if
+conn.close
+%>
+
+### update
+
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open "C:/Users/delickate/Documents/Visual Studio 2013/Projects/UsermanagementAdoDotNet/webdata/usermanagemenetdb.mdb"
+
+id=Request.Form("person_id")
+
+if Request.form("companyname")="" then
+  set rs=Server.CreateObject("ADODB.Recordset")
+  rs.open "SELECT * FROM users WHERE id='" & id & "'",conn
+  %>
+  <form method="post" action="demo_update.asp">
+  <table>
+  <%for each x in rs.Fields%>
+  <tr>
+  <td><%=x.name%></td>
+  <td><input name="<%=x.name%>" value="<%=x.value%>"></td>
+  <%next%>
+  </tr>
+  </table>
+  <br><br>
+  <input type="submit" value="Update record">
+  </form>
+<%
+else
+  sql="UPDATE users SET "
+  sql=sql & "'" & Request.Form("person_name") & "',"
+  sql=sql & "'" & Request.Form("person_phone") & "',"
+  sql=sql & "'" & Request.Form("person_address") & "',"
+  sql=sql & "'" & Request.Form("person_city") & "',"
+  sql=sql & "'" & Request.Form("person_postcode") & "',"
+  sql=sql & "'" & Request.Form("person_country") & "')"
+  sql=sql & " WHERE id='" & id & "'"
+  on error resume next
+  conn.Execute sql
+  if err<>0 then
+    response.write("No update permissions!")
+  else
+    response.write("Record " & id & " was updated!")
+  end if
+end if
+conn.close
+%>
+
+### Delete
+
+sql="DELETE FROM users"
+  sql=sql & " WHERE id='" & id & "'"
+  on error resume next
+  conn.Execute sql
+  if err<>0 then
+    response.write("No update permissions!")
+  else
+    response.write("Record " & id & " was deleted!")
+  end if
+  

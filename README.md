@@ -175,12 +175,7 @@ The system dynamically generates the navigation menu based on user permissions. 
 
 1. [Installation](#installation)
 2. [Configuration](#configuration)
-3. [Database Schema](#database-schema)
-4. [Usage](#usage)
-5. [Directory Structure](#directory-structure)
-6. [Helper Functions](#helper-functions)
-7. [Contributing](#contributing)
-8. [License](#license)
+3. [License](#license)
 
 ---
 

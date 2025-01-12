@@ -209,19 +209,24 @@ This project is licensed under the [MIT License](LICENSE).
 ## Basic concepts ADO
 
 ### Connection
+```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
 conn.Provider="Microsoft.Jet.OLEDB.4.0"
 conn.Open "C:/Users/delickate/Documents/Visual Studio 2013/Projects/UsermanagementAdoDotNet/webdata/usermanagemenetdb.mdb"
 %> 
+```
 
 ### Recordset
+```
 <%
 set rs=Server.CreateObject("ADODB.recordset")
 rs.Open "Customers", conn
 %>
+```
 
 ### Show record
+```
 <html>
 <body>
 
@@ -249,9 +254,10 @@ conn.close
 
 </body>
 </html> 
+```
 
 ### Fetch record
-
+```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
 conn.Provider="Microsoft.Jet.OLEDB.4.0"
@@ -279,9 +285,10 @@ rs.Open sql, conn
   rs.close
   conn.close%>
 </table>
+```
 
 ### insert
-
+```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
 conn.Provider="Microsoft.Jet.OLEDB.4.0"
@@ -307,9 +314,10 @@ else
 end if
 conn.close
 %>
+```
 
 ### update
-
+```
 <%
 set conn=Server.CreateObject("ADODB.Connection")
 conn.Provider="Microsoft.Jet.OLEDB.4.0"
@@ -353,9 +361,10 @@ else
 end if
 conn.close
 %>
+```
 
 ### Delete
-
+```
 sql="DELETE FROM users"
   sql=sql & " WHERE id='" & id & "'"
   on error resume next
@@ -365,4 +374,4 @@ sql="DELETE FROM users"
   else
     response.write("Record " & id & " was deleted!")
   end if
-  
+```  

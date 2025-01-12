@@ -1,0 +1,6 @@
+c:\users\delickate\documents\visual studio 2013\Projects\UsermanagementAdoDotNet\UsermanagementAdoDotNet\bin\UsermanagementAdoDotNet.dll.config
+c:\users\delickate\documents\visual studio 2013\Projects\UsermanagementAdoDotNet\UsermanagementAdoDotNet\bin\UsermanagementAdoDotNet.dll
+c:\users\delickate\documents\visual studio 2013\Projects\UsermanagementAdoDotNet\UsermanagementAdoDotNet\bin\UsermanagementAdoDotNet.pdb
+c:\users\delickate\documents\visual studio 2013\Projects\UsermanagementAdoDotNet\UsermanagementAdoDotNet\obj\Debug\UsermanagementAdoDotNet.csprojResolveAssemblyReference.cache
+c:\users\delickate\documents\visual studio 2013\Projects\UsermanagementAdoDotNet\UsermanagementAdoDotNet\obj\Debug\UsermanagementAdoDotNet.dll
+c:\users\delickate\documents\visual studio 2013\Projects\UsermanagementAdoDotNet\UsermanagementAdoDotNet\obj\Debug\UsermanagementAdoDotNet.pdb
